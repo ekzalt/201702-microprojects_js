@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Random Pass</title>
+</head>
+
+<body>
+<script>
+
+'use strict';
+
+const randPass = (num, flag) => {
+  let chars = ['0','1','2','3','4','5','6','7','8','9',
+               'A','B','C','D','E','F','G','H','I','J','K','L','M','N',
+               '0','1','2','3','4','5','6','7','8','9',
+               'O','P','Q','R','S','T','U','V','W','X','Y','Z',
+               '0','1','2','3','4','5','6','7','8','9',
+               'a','b','c','d','e','f','g','h','i','j','k','l','m','n',
+               '0','1','2','3','4','5','6','7','8','9',
+               'o','p','q','r','s','t','u','v','w','x','y','z',
+               '0','1','2','3','4','5','6','7','8','9'];
+  let pass = [];
+  flag = flag || 'l';
+  
+  for (let i = 0; i < num; i++) {
+    let char = chars[ Math.floor(Math.random() * chars.length) ];
+    pass.push(char);
+  }
+  
+  switch (flag) {
+    case 'l':
+      return pass.join('').toLowerCase();
+    case 'u':
+      return pass.join('').toUpperCase();
+    case 'r':
+      return pass.join('');
+    default:
+      return pass.join('').toLowerCase();
+  }
+};
+
+document.body.append( randPass(10) );
+
+</script>
+</body>
+</html>

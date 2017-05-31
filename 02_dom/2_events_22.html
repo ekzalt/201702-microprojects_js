@@ -1,0 +1,103 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Edit area</title>
+<style>
+
+#view,
+#area {
+  height: 150px;
+  width: 400px;
+  font-family: arial;
+  font-size: 14px;
+}
+
+#view {
+  /* padding + border = 3px */
+
+  padding: 2px;
+  border: 1px solid black;
+}
+
+#area {
+  display: none;
+  /* replace padding with border (still 3px not to shift the contents) */
+
+  border: 3px groove blue;
+  padding: 0;
+}
+
+#area:focus {
+  outline: none;
+  /* remove focus border in Safari */
+}
+
+</style>
+</head>
+
+<body>
+
+<ul>
+  <li>Ctrl-E to start editing.</li>
+  <li>While editing: Ctrl-S to save, Esc to cancel.</li>
+</ul>
+
+<textarea id="area"></textarea>
+<div id="view">Text</div>
+
+<script>
+
+'use strict';
+
+let area = document.querySelector('#area');
+let view = document.querySelector('#view');
+
+const out = (text, div) => {
+  div.style.display = '';
+  text.style.display = '';
+};
+
+const edit = (text, div) => {
+  div.style.display = 'none';
+  text.style.display = 'block';
+
+  if (div.textContent) text.value = div.textContent;
+  text.focus();
+};
+
+const save = (text, div) => {
+  div.style.display = '';
+  text.style.display = '';
+
+  div.textContent = text.value;
+};
+
+const action = e => {
+  if (e.keyCode === 27) {
+    e.preventDefault();
+    console.log('out');
+    out(area, view);
+
+  } else if ( (e.ctrlKey || e.metaKey) && e.keyCode === 69 ) {
+    e.preventDefault();
+    console.log('edit');
+    edit(area, view);
+
+  } else if ( (e.ctrlKey || e.metaKey) && e.keyCode === 83 ) {
+    e.preventDefault();
+    console.log('save');
+    save(area, view);
+
+  } else {
+    console.log('???');
+    return;
+  }
+};
+
+document.addEventListener('keydown', action);
+
+</script>
+</body>
+</html>

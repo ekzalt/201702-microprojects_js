@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Custom Select</title>
+
+<style>
+
+/* css style here */
+
+.customselect {
+  width: 200px;
+  font-size: 14px;
+  display: inline-block;
+}
+
+.customselect .title {
+  height: 20px;
+  border: 2px groove #ADD8E6;
+  background: white;
+  width: 200px;
+  box-sizing: border-box;
+  padding: 2px;
+  line-height: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.customselect li {
+  padding: 2px;
+  cursor: pointer;
+}
+
+.customselect li:nth-child(even) {
+  background-color: #f0f8ff;
+}
+
+.customselect li:hover {
+  background-color: #7fffd4;
+}
+
+.customselect ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  position: absolute;
+  z-index: 1000;
+  background: white;
+  width: 200px;
+  border-bottom: 1px solid #add8e6;
+  border-left: 1px solid #add8e6;
+  border-right: 1px solid #add8e6;
+  box-sizing: border-box;
+}
+
+.customselect.open ul {
+  display: block;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- html markup here -->
+
+<h1>Компонент Custom Select</h1>
+<p>Компонент "на событиях"</p>
+
+<div>Последний результат: <span id="result">...</span></div>
+
+<div id="animal-select" class="customselect">
+  <button class="title">Выберите</button>
+  <ul>
+    <!-- значение хранится в свойстве data-value -->
+    <li data-value="bird">Птицы</li>
+    <li data-value="fish">Рыбы</li>
+    <li data-value="animal">Звери</li>
+    <li data-value="dino">Динозавры</li>
+    <li data-value="simplest">Одноклеточные</li>
+  </ul>
+</div>
+
+<div id="food-select" class="customselect">
+  <button class="title">Выберите</button>
+  <ul>
+    <li data-value="carnivore">Плотоядные</li>
+    <li data-value="herbivore">Травоядные</li>
+    <li data-value="omnivore">Всеядные</li>
+  </ul>
+</div>
+
+<script src="https://cdn.polyfill.io/v1/polyfill.js?features=Element.prototype.closest"></script>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+class CustomSelect {
+  constructor(props) {
+    let elem = props.elem;
+    let title = elem.querySelector('.title');
+    
+    const selectEvent = content => {
+      let e = new CustomEvent('select', {
+        bubbles: true,
+        detail: content
+      });
+      elem.dispatchEvent(e);
+    };
+
+    const toggleDrop = e => {
+      if (elem.contains(e.target) && e.target.closest('.title')) {
+        elem.classList.toggle('open');
+
+      } else if (elem.contains(e.target) && e.target.closest('li')) {
+        title.textContent = e.target.textContent;
+        selectEvent(e.target.dataset.value);
+        elem.classList.remove('open');
+        
+      } else { elem.classList.remove('open'); }
+    };
+
+    document.addEventListener('click', toggleDrop);
+
+    this.elem = elem;
+  }
+
+  showSelected() {
+    return this.elem.querySelector('.title').textContent;
+  }
+}
+
+let animalSelect = new CustomSelect({
+  elem: document.getElementById('animal-select')
+});
+
+let foodSelect = new CustomSelect({
+  elem: document.getElementById('food-select')
+});
+
+document.addEventListener('select', e => document.getElementById('result').textContent = e.detail);
+
+</script>
+</body>
+</html>

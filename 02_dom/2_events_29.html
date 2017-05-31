@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент Слайдер</title>
+
+<style>
+
+/* css style here */
+
+.slider {
+  border-radius: 5px;
+  background: #E0E0E0;
+  background: -moz-linear-gradient(left top, #E0E0E0, #EEEEEE) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, right bottom, from(#E0E0E0), to(#EEEEEE));
+  background: linear-gradient(left top, #E0E0E0, #EEEEEE);
+  width: 310px;
+  height: 15px;
+  margin: 5px;
+}
+
+.thumb {
+  width: 10px;
+  height: 25px;
+  border-radius: 3px;
+  position: relative;
+  left: 10px;
+  top: -5px;
+  background: blue;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Компонент Слайдер</h1>
+
+<div id="slider" class="slider">
+  <div class="thumb"></div>
+</div>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+function Slider(opts) {
+  var elem = opts.elem;
+  var thumb = elem.children[0];
+  var thumbBox, sliderBox, shiftX;
+
+  function getCoords(elem) {
+    var box = elem.getBoundingClientRect();
+    return {
+      top: box.top + pageYOffset,
+      left: box.left + pageXOffset
+    };
+  }
+
+  function startSlide(e) {
+    if (!e.target.closest('.thumb')) return;
+
+    e.preventDefault();
+    sliderBox = getCoords(elem);
+    thumbBox = getCoords(thumb);
+    shiftX = e.pageX - thumbBox.left;
+
+    document.addEventListener('mousemove', moveSlide);
+    document.addEventListener('mouseup', stopSlide);
+  }
+
+  function moveSlide(e) {
+    var newLeft = e.pageX - shiftX - sliderBox.left;
+    var rightEdge = elem.offsetWidth - thumb.offsetWidth;
+
+    if (newLeft < 0) newLeft = 0;
+    if (newLeft > rightEdge) newLeft = rightEdge;
+
+    thumb.style.left = newLeft + 'px';
+  }
+
+  function stopSlide(e) {
+    document.removeEventListener('mousemove', moveSlide);
+    document.removeEventListener('mouseup', stopSlide);
+  }
+
+  elem.addEventListener('mousedown', startSlide);
+  elem.addEventListener('dragstart', startSlide);
+
+  this.elem = elem;
+}
+
+var pageSlider = new Slider({
+  elem: document.getElementById('slider')
+});
+
+</script>
+</body>
+</html>

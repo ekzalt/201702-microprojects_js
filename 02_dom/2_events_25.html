@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Депозитный калькулятор</title>
+
+<style>
+
+td select,
+td input {
+  width: 150px;
+}
+
+#diagram td {
+  vertical-align: bottom;
+  text-align: center;
+  padding: 10px;
+}
+
+#diagram div {
+  margin: auto;
+}
+
+#height-before {
+  background: red;
+  width: 40px;
+  height: 100px;
+}
+
+#height-after {
+  background: green;
+  width: 40px;
+  height: 0;
+  transition: 1s;
+}
+
+</style>
+</head>
+
+<body>
+
+  <h1>Депозитный калькулятор</h1>
+
+  <form name="calculator">
+    <p>Калькулятор процентов, из расчёта <input name="percent" type="number" value="10"> % годовых (можно дробно 10.25)</p>
+    <table>
+      <tr>
+        <td>Сумма (целое число)</td>
+        <td>
+          <input name="money" type="number" value="1000">
+        </td>
+      </tr>
+      <tr>
+        <td>Срок в месяцах</td>
+        <td>
+          <select name="months">
+            <option value="3">3 (минимум)</option>
+            <option value="6">6 (полгода)</option>
+            <option value="12" selected>12 (год)</option>
+            <option value="18">18 (1.5 года)</option>
+            <option value="24">24 (2 года)</option>
+            <option value="36">36 (3 года)</option>
+            <option value="60">60 (5 лет)</option>
+            <option value="120">120 (10 лет)</option>
+            <option value="240">240 (20 лет)</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>С капитализацией<br>(ежемесячно)</td>
+        <td>
+          <input name="capitalization" type="checkbox">
+        </td>
+      </tr>
+    </table>
+  </form>
+
+  <table id="diagram">
+    <tr>
+      <th>Было:</th>
+      <th>Станет:</th>
+    </tr>
+    <tr>
+      <th id="money-before"></th>
+      <th id="money-after"></th>
+    </tr>
+    <tr>
+      <td>
+        <div id="height-before"></div>
+      </td>
+      <td>
+        <div id="height-after"></div>
+      </td>
+    </tr>
+    <tr>
+      <td>Прирост</td>
+      <td id="money-percent"></td>
+    </tr>
+    <tr>
+      <td>Прибыль</td>
+      <td id="money-profit"></td>
+    </tr>
+  </table>
+
+<script>
+
+'use strict';
+
+/*
+function getChar(event) {
+  if (event.which === null) {
+    if (event.keyCode < 32) return null;
+    return String.fromCharCode(event.keyCode); // IE
+  }
+
+  if (event.which !== 0 && event.charCode !== 0) {
+    if (event.which < 32) return null;
+    return String.fromCharCode(event.which); // остальные
+  }
+
+  return null; // специальная клавиша
+}
+*/
+
+/*
+n - количество периодов (месяцев)
+
+Сложный процент
+{сумма} * ( 1 + {процент} / 100 / 12 ){в n-степени}
+
+Простой процент
+{сумма} + ( {сумма} / 100 * {процент} / 12 ) * n
+
+Разница в деньгах от начальной суммы (прибыль)
+sum2 - sum1
+
+Разница в % от начальной суммы
+sum2 / sum1 * 100 - 100
+*/
+
+let form = document.querySelector('form[name="calculator"]');
+
+/**
+ * Model! Takes data from the "inputs" and calculates a new amount and profit
+ * @param  {Object} form DOM node, element <form>
+ * @return {Object}      start sum, finish sum, profit absolute, profit in percent
+ */
+const calc = form => {
+  let percent = parseFloat(form.percent.value) || 0;
+  let sum1 = parseInt(form.money.value) || 0;
+  let sum2 = 0;
+  let checkbox = form.capitalization.checked;
+  let term = parseInt(form.months.value);
+
+  if (sum1 > 0) {
+    if (!checkbox) { // простой процент
+      sum2 = sum1 + sum1 / 100 * percent / 12 * term;
+    } else { // сложный процент
+      sum2 = sum1 * Math.pow( (1 + percent / 100 / 12), term );
+    }
+    sum2 = Math.round(sum2);
+  }
+
+  let diffMoney = sum2 - sum1;
+  let diffPercent = sum2 !== 0 ? (sum2 / sum1 * 100 - 100).toFixed(2) : sum2.toFixed(2);
+
+  return { sum1, sum2, diffMoney, diffPercent };
+};
+
+/**
+ * View! Prints data to the page
+ * @param  {Object} props from calc()
+ */
+const print = props => {
+  let view = document.querySelector('#diagram');
+  let moneyBefore = view.querySelector('#money-before');
+  let moneyAfter = view.querySelector('#money-after');
+  let heightAfter = view.querySelector('#height-after');
+  let moneyPercent = view.querySelector('#money-percent');
+  let moneyProfit = view.querySelector('#money-profit');
+
+  moneyBefore.textContent = props.sum1;
+  moneyAfter.textContent = props.sum2;
+  heightAfter.style.height = 100 + parseInt(props.diffPercent) + 'px';
+  moneyPercent.textContent = props.diffPercent + '%';
+  moneyProfit.textContent = props.diffMoney;
+};
+
+print(calc(form));
+
+const check = e => {
+  if ( (e.keyCode < 48 || e.keyCode > 57) &&
+        e.keyCode !== 46 ) e.preventDefault();
+  // допускаются '0-9' и '.' для дробных процентов
+};
+
+const output = e => {
+  if (e.target.type !== 'checkbox' && isNaN(e.target.value)) return;
+  if (e.target.value < 0) e.target.value = 0;
+  print(calc(form));
+};
+
+form.addEventListener('keypress', check);
+form.addEventListener('change', output);
+// input срабатывает и для select (o_O)
+form.addEventListener('input', output);
+
+</script>
+</body>
+</html>

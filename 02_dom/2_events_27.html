@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+
+<style>
+
+td select,
+td input {
+  width: 150px;
+}
+
+label {
+  display: block;
+}
+
+textarea {
+  display: block;
+  width: 400px;
+  height: 100px;
+}
+
+.errorBorder {
+  border: 1px solid red;
+}
+
+.errorText {
+  color: red;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Валидация формы</h1>
+
+<form>
+  <table>
+    <tr>
+      <td><label for="from">От кого</label></td>
+      <td>
+        <input name="from" id="from" type="text">
+      </td>
+    </tr>
+    <tr>
+      <td><label for="password">Ваш пароль</label></td>
+      <td>
+        <input name="password" id="password" type="password">
+      </td>
+    </tr>
+    <tr>
+      <td><label for="password2">Повторите пароль</label></td>
+      <td>
+        <input name="password2" id="password2" type="password">
+      </td>
+    </tr>
+    <tr>
+      <td><label for="to">Куда</label></td>
+      <td>
+        <select name="to" id="to">
+          <option></option>
+          <option value="1">Отдел снабжения</option>
+          <option value="2">Отдел разработки</option>
+          <option value="3">Директору</option>
+        </select>
+      </td>
+    </tr>
+  </table>
+  
+  <label>Сообщение:
+    <textarea name="message"></textarea>
+  </label>
+
+  <button type="button">Проверить</button>
+</form>
+
+<script>
+
+'use strict';
+
+const createWarn = () => {
+  let td = document.createElement('td');
+  td.classList.add('errorText');
+  return td;
+};
+
+let form = document.querySelector('form');
+
+const validate = form => {
+  console.log('validation...');
+
+  if (!form.from.value) {
+    if (form.from.classList.contains('errorBorder')) return;
+    let parent = form.from.closest('tr');
+    let warn = createWarn();
+    form.from.classList.add('errorBorder');
+    warn.textContent = 'введите имя';
+    parent.append(warn);
+  }
+
+  if (!form.password.value) {
+    if (form.password.classList.contains('errorBorder')) return;
+    let parent = form.password.closest('tr');
+    let warn = createWarn();
+    form.password.classList.add('errorBorder');
+    warn.textContent = 'введите пароль';
+    parent.append(warn);
+  }
+
+  if (!form.password2.value) {
+    if (form.password2.classList.contains('errorBorder')) return;
+    let parent = form.password2.closest('tr');
+    let warn = createWarn();
+    form.password2.classList.add('errorBorder');
+    warn.textContent = 'подтвердите пароль';
+    parent.append(warn);
+  }
+
+  if (form.password.value !== form.password2.value) {
+    if (form.password.classList.contains('errorBorder')) return;
+    let parent = form.password.closest('tr');
+    let warn = createWarn();
+    form.password.classList.add('errorBorder');
+    form.password2.classList.add('errorBorder');
+    warn.textContent = 'пароли не совпадают';
+    parent.append(warn);
+  }
+
+  if (!form.to.value) {
+    if (form.to.classList.contains('errorBorder')) return;
+    let parent = form.to.closest('tr');
+    let warn = createWarn();
+    form.to.classList.add('errorBorder');
+    warn.textContent = 'выберите куда';
+    parent.append(warn);
+  }
+
+  if (!form.message.value) {
+    if (form.message.classList.contains('errorBorder')) return;
+    let parent = form.message.closest('label');
+    let warn = document.createElement('span');
+    warn.classList.add('errorText');
+    form.message.classList.add('errorBorder');
+    warn.textContent = 'уточните информацию';
+    parent.insertBefore(warn, parent.children[0]);
+  }
+};
+
+const check = e => {
+  if ( !(form.contains(e.target) && e.target.tagName === 'BUTTON') ) return;
+  validate(form);
+};
+
+form.addEventListener('click', check);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент список</title>
+
+<style>
+
+/* css style here */
+
+.selected {
+  background: #0f0;
+}
+
+li {
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- html markup here -->
+
+<h1>Компонент список с выделением</h1>
+<p>Компонент "на событиях"</p>
+
+<p>Клик на элементе выделяет только его.
+  <br>Ctrl(Cmd)+Клик добавляет/убирает элемент из выделенных.
+  <br>Shift+Клик добавляет промежуток от последнего кликнутого к выделению.
+</p>
+
+<ul>
+  <li>Кристофер Робин</li>
+  <li>Винни-Пух</li>
+  <li>Ослик Иа</li>
+  <li>Мудрая Сова</li>
+  <li>Кролик. Просто кролик.</li>
+</ul>
+
+<button onclick="alert(listSelect.getSelected())">listSelect.getSelected()</button>
+
+<script src="https://cdn.polyfill.io/v1/polyfill.js?features=Element.prototype.closest"></script>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+function ListSelect(options) {
+  var elem = options.elem;
+
+  var lastClickedLi = null;
+
+  elem.onmousedown = function() {
+    return false;
+  };
+
+  elem.onclick = function(e) {
+    var li = e.target.closest('li');
+    if (!li) return;
+
+    if (e.metaKey || e.ctrlKey) { // для Mac проверяем Cmd, т.к. Ctrl + click там контекстное меню
+      toggleSelect(li);
+    } else if (e.shiftKey) {
+      selectFromLast(li);
+    } else {
+      selectSingle(li);
+    }
+    lastClickedLi = li;
+    selectEvent( getSelected() );
+  };
+
+  function selectEvent(content) {
+    var widgetEvent = new CustomEvent('select', {
+      bubbles: true,
+      detail: content
+    });
+    elem.dispatchEvent(widgetEvent);
+  }
+
+  function deselectAll() {
+    [].forEach.call(elem.children, function(child) {
+      child.classList.remove('selected');
+    });
+  }
+
+  function toggleSelect(li) {
+    li.classList.toggle('selected');
+  }
+
+  function selectSingle(li) {
+    deselectAll();
+    li.classList.add('selected');
+  }
+
+  function selectFromLast(target) {
+    var startElem = lastClickedLi || elem.children[0];
+
+    target.classList.add('selected');
+    if (startElem === target) {
+      // клик на том же элементе, что и раньше
+      // это особый случай
+      return;
+    }
+
+    var isLastClickedBefore = startElem.compareDocumentPosition(target) & 4;
+
+    if (isLastClickedBefore) {
+      for (var elem = startElem; elem !== target; elem = elem.nextElementSibling) {
+        elem.classList.add('selected');
+      }
+    } else {
+      for (var elem = startElem; elem !== target; elem = elem.previousElementSibling) {
+        elem.classList.add('selected');
+      }
+    }
+  }
+
+  function getSelected() {
+    return [].map.call(elem.querySelectorAll('.selected'), function(li) {
+      return li.innerHTML;
+    });
+  }
+
+  this.getSelected = getSelected;
+}
+
+var listSelect = new ListSelect({
+  elem: document.querySelector('ul')
+});
+
+document.querySelector('ul').addEventListener('select', function(e) {
+  alert(e.detail);
+});
+
+</script>
+</body>
+</html>

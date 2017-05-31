@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<p>Введите текст(например, пароль) с нажатым CapsLock:</p>
+
+<input type="text">
+
+<div style="display:none;color:red" id="capsIndicator">Внимание: нажат CapsLock!</div>
+
+<script>
+
+'use strict';
+
+let input = document.querySelector('input');
+let warn = document.querySelector('#capsIndicator');
+let caps = false;
+
+const checkCaps = e => {
+  let char = String.fromCharCode(e.keyCode || e.charCode);
+
+  if (!isNaN(char)) return; // проверка на цифру
+
+  if (char === char.toUpperCase() && !e.shiftKey) {
+    console.log('Caps!');
+    caps = true;
+    warn.style.display= 'block';
+
+  } else if (char === char.toLowerCase() && e.shiftKey) {
+    console.log('Caps!');
+    caps = true;
+    warn.style.display= 'block';
+
+  } else if (char === char.toUpperCase() && e.shiftKey) {
+    console.log('Caps off');
+    caps = false;
+    warn.style.display= 'none';
+
+  } else if (char === char.toLowerCase() && !e.shiftKey) {
+    console.log('Caps off');
+    caps = false;
+    warn.style.display= 'none';
+  }
+};
+
+const toggleCaps = e => {
+  if (e.keyCode !== 20) return;
+
+  if (!caps && e.keyCode === 20) {
+    console.log('Caps!');
+    caps = true;
+    warn.style.display= 'block';
+
+  } else if (caps && e.keyCode === 20) {
+    console.log('Caps off');
+    caps = false;
+    warn.style.display= 'none';
+  }
+};
+
+input.addEventListener('keypress', checkCaps);
+document.addEventListener('keydown', toggleCaps);
+
+</script>
+</body>
+</html>

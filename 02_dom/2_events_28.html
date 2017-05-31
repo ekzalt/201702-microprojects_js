@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент Часы</title>
+
+<style>
+
+/* css style here */
+
+.hour {
+  color: green
+}
+
+.min {
+  color: blue
+}
+
+.sec {
+  color: red
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Компонент Часы</h1>
+<p>(прототипный стиль, классы ES6)</p>
+
+<div id="clock" class="clock">
+  <span class="hour">00</span>:<span class="min">00</span>:<span class="sec">00</span>
+</div>
+
+<input type="button" onclick="pageClock.start()" value="Старт">
+<input type="button" onclick="pageClock.stop()" value="Стоп">
+<input type="button" onclick="alert('Часы должны останавливаться во время alert,\nи продолжать корректно работать после нажатия на ОК')" value="alert для проверки корректного возобновления">
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+class Clock {
+  constructor(props) {
+    // this.prop = props.prop;
+    const render = () => {
+      let div = document.createElement('div');
+
+      div.id = 'clock';
+      div.classList.add('clock');
+      div.innerHTML = '<span class="hour">00</span>:<span class="min">00</span>:<span class="sec">00</span>';
+      
+      document.querySelector('h1').after(div);
+      
+      return div;
+    };
+
+    if (!props || !props.elem) this.elem = render();
+    else this.elem = props.elem;
+  }
+
+  _update(elem) {
+    let clock = elem;
+    let date = new Date();
+
+    let hours = date.getHours();
+    if (hours < 10) hours = '0' + hours;
+    clock.children[0].innerHTML = hours;
+
+    let minutes = date.getMinutes();
+    if (minutes < 10) minutes = '0' + minutes;
+    clock.children[1].innerHTML = minutes;
+
+    let seconds = date.getSeconds();
+    if (seconds < 10) seconds = '0' + seconds;
+    clock.children[2].innerHTML = seconds;
+  }
+
+  start() {
+    this._timerId = setInterval(this._update, 1000, this.elem);
+    this._update(this.elem);
+  }
+
+  stop() {
+    clearInterval(this._timerId);
+  }
+}
+
+let pageClock = new Clock({
+  elem: document.getElementById('clock')
+});
+
+</script>
+</body>
+</html>

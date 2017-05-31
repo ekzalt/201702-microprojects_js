@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+
+<style>
+
+body {
+  height: 2000px;
+  /* подсказка должна работать независимо от прокрутки */
+}
+
+.tip {
+  display: inline-block;
+  background: #333;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 12px;
+  border-radius: 5px;
+  position: fixed;
+}
+
+</style>
+</head>
+
+<body>
+  <h1>Генерация подзказок при наведении на кнопки</h1>
+  <h3>А конкретнее - на теги с атрибутом data-tooltip="подсказка..."</h3>
+
+  <p>ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя</p>
+  <p>ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя ЛяЛяЛя</p>
+
+  <button data-tooltip="подсказка длиннее, чем элемент">Короткая кнопка</button>
+  <button data-tooltip="HTML<br>подсказка">Ещё кнопка</button>
+
+  <p>Прокрутите страницу, чтобы ссылки были вверху и проверьте, правильно ли показываются подсказки.</p>
+
+<script>
+
+'use strict';
+
+const showTip = e => {
+  if (!e.target.hasAttribute('data-tooltip')) return;
+
+  let targetBox = e.target.getBoundingClientRect();
+  let tip = document.createElement('div');
+
+  tip.innerHTML = e.target.getAttribute('data-tooltip');
+  tip.classList.add('tip');
+  e.target.parentElement.append(tip);
+
+  const margin = 5;
+  let x = Math.round(targetBox.left - (tip.offsetWidth - e.target.offsetWidth)/2);
+  let y = Math.round(targetBox.top - tip.offsetHeight - margin);
+
+  if (y < 0) y = Math.round(targetBox.bottom + margin);
+
+  tip.style.top = `${y}px`;
+  tip.style.left = `${Math.max(0, x)}px`;
+};
+
+const hideTip = e => {
+  if (!e.target.hasAttribute('data-tooltip')) return;
+  let tip = e.target.parentElement.querySelector('.tip');
+  if (tip) tip.remove();
+};
+
+document.addEventListener('mouseover', showTip);
+document.addEventListener('mouseout', hideTip);
+
+</script>
+</body>
+</html>

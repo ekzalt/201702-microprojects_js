@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент Слайдер</title>
+
+<style>
+
+/* css style here */
+
+.slider {
+  margin: 5px;
+  width: 310px;
+  height: 15px;
+  border-radius: 5px;
+  background: #E0E0E0;
+  background: -moz-linear-gradient(left top, #E0E0E0, #EEEEEE) repeat scroll 0 0 transparent;
+  background: -webkit-gradient(linear, left top, right bottom, from(#E0E0E0), to(#EEEEEE));
+  background: linear-gradient(left top, #E0E0E0, #EEEEEE);
+}
+
+.thumb {
+  position: relative;
+  top: -5px;
+  left: 0;
+  width: 10px;
+  height: 25px;
+  border-radius: 3px;
+  background: blue;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- html markup here -->
+
+<h1>Компонент Слайдер</h1>
+<p>Компонент Слайдер с событиями</p>
+
+<div id="slider" class="slider">
+  <div class="thumb"></div>
+</div>
+
+<p>
+  slide:<span id="slide"></span>
+  change:<span id="change"></span>
+</p>
+
+<script src="https://cdn.polyfill.io/v1/polyfill.js?features=Element.prototype.closest"></script>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+function Slider(options) {
+  var elem = options.elem;
+  var thumb = elem.querySelector('.thumb');
+  var sliderBox, thumbBox, shiftX, shiftY;
+
+  var max = options.max || 100;
+  var pixelsPerValue = (elem.clientWidth - thumb.clientWidth) / max;
+
+  function positionToValue(left) {
+    return Math.round(left / pixelsPerValue);
+  }
+
+  function valueToPosition(value) {
+    return pixelsPerValue * value;
+  }
+
+  function slideEvent(content) {
+    var e = new CustomEvent('slide', {
+      bubbles: true,
+      detail: content
+    });
+    elem.dispatchEvent(e);
+  }
+
+  function changeEvent(content) {
+    var e = new CustomEvent('change', {
+      bubbles: true,
+      detail: content
+    });
+    elem.dispatchEvent(e);
+  }
+
+  elem.ondragstart = function() {
+    return false;
+  };
+
+  elem.onmousedown = function(e) {
+    if (e.target.closest('.thumb')) {
+      startDrag(e.clientX, e.clientY);
+      return false; // disable selection start (cursor change)
+    }
+  };
+
+  function startDrag(startClientX, startClientY) {
+    thumbBox = thumb.getBoundingClientRect();
+    shiftX = startClientX - thumbBox.left;
+    shiftY = startClientY - thumbBox.top;
+
+    sliderBox = elem.getBoundingClientRect();
+
+    document.addEventListener('mousemove', onDocumentMouseMove);
+    document.addEventListener('mouseup', onDocumentMouseUp);
+  }
+
+  function moveTo(clientX) {
+    // вычесть координату родителя, т.к. position: relative
+    var newLeft = clientX - shiftX - sliderBox.left;
+    var rightEdge = elem.offsetWidth - thumb.offsetWidth;
+    // курсор ушёл вне слайдера
+    if (newLeft < 0) { newLeft = 0; }    
+    if (newLeft > rightEdge) { newLeft = rightEdge; }
+
+    thumb.style.left = newLeft + 'px';
+
+    return newLeft;
+  }
+
+  function onDocumentMouseMove(e) {
+    slideEvent( positionToValue( moveTo(e.clientX) ) );
+  }
+
+  function onDocumentMouseUp(e) {
+    changeEvent( positionToValue( moveTo(e.clientX) ) );
+    endDrag();
+  }
+
+  function endDrag() {
+    document.removeEventListener('mousemove', onDocumentMouseMove);
+    document.removeEventListener('mouseup', onDocumentMouseUp);
+  }
+
+  function setValue(val) {
+    thumb.style.left = valueToPosition(val) + 'px';
+    slideEvent(val);
+    changeEvent(val);
+  }
+
+  this.elem = elem;
+  this.setValue = setValue;
+}
+
+var slider = new Slider({
+  elem: document.getElementById('slider'),
+  max: 100 // слайдер на самой правой позиции соответствует 100
+});
+
+var sliderElem = document.getElementById('slider');
+
+sliderElem.addEventListener('slide', function(e) {
+  document.getElementById('slide').textContent = e.detail;
+});
+
+sliderElem.addEventListener('change', function(e) {
+  document.getElementById('change').textContent = e.detail;
+});
+
+slider.setValue(50);
+
+</script>
+</body>
+</html>

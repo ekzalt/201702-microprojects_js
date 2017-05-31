@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+<style>
+
+#mouse {
+  display: inline-block;
+  cursor: pointer;
+  margin: 0;
+
+  position: fixed;
+}
+
+#mouse:focus {
+  outline: 1px dashed black;
+}
+
+</style>
+</head>
+
+<body>
+
+<p>Кликните на мышонка и передвигайте его, нажимая клавиши со стрелками.</p>
+
+<pre id="mouse" tabindex="1">
+ _   _
+(q\_/p)
+ /. .\
+=\_t_/=   __
+ /   \   (
+((   ))   )
+/\) (/\  /
+\  Y  /-'
+ nn^nn
+</pre>
+
+<script>
+
+'use strict';
+
+let mouse = document.querySelector('#mouse');
+const STEP = 10;
+
+const getCoords = elem => {
+  let box = elem.getBoundingClientRect();
+
+  return {
+    top: box.top + pageYOffset,
+    bottom: box.bottom + pageYOffset,
+    left: box.left + pageXOffset,
+    right: box.right + pageXOffset
+  };
+};
+
+const move = e => {
+  let box = getCoords(e.target);
+
+  switch (e.keyCode) {
+  case 39:
+    console.log('right');
+    e.target.style.left = box.left + STEP + 'px';
+    break;
+  case 37:
+    console.log('left');
+    e.target.style.left = box.left - STEP + 'px';
+    break;
+  case 38:
+    console.log('top');
+    e.target.style.top = box.top - STEP + 'px';
+    break;
+  case 40:
+    console.log('bottom');
+    e.target.style.top = box.top + STEP + 'px';
+    break;
+  }
+};
+
+const start = e => {
+  console.log('in');
+  e.target.addEventListener('keydown', move);
+};
+
+const stop = e => {
+  console.log('out');
+  e.target.removeEventListener('keydown', move);
+};
+
+mouse.addEventListener('focus', start);
+mouse.addEventListener('blur', stop);
+
+</script>
+</body>
+</html>

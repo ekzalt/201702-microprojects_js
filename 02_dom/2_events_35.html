@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент голосовалка</title>
+
+<style>
+
+/* css style here */
+
+.voter {
+  font-family: Consolas, "Lucida Console", monospace;
+  font-size: 18px;
+}
+
+.up,
+.down {
+  cursor: pointer;
+  color: blue;
+  font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- html markup here -->
+
+<h1>Компонент голосовалка</h1>
+<p>Голосовалка "на событиях"</p>
+
+<div id="voter" class="voter">
+  <span class="down">—</span>
+  <span class="vote">0</span>
+  <span class="up">+</span>
+</div>
+
+<script src="https://cdn.polyfill.io/v1/polyfill.js?features=Element.prototype.closest"></script>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+function Voter(options) {
+  var elem = options.elem;
+
+  var voteElem = elem.querySelector('.vote');
+
+  elem.onclick = function(e) {
+    // сам обработчик не меняет голос, он вызывает функцию
+    if (e.target.closest('.down')) {
+      voteDecrease();
+    } else if (e.target.closest('.up')) {
+      voteIncrease();
+    }
+  };
+
+  elem.onmousedown = function() {
+    return false;
+  };
+
+  // ----------- методы -------------
+
+  function voteDecrease() {
+    setVote(+voteElem.innerHTML - 1);
+  }
+
+  function voteIncrease() {
+    setVote(+voteElem.innerHTML + 1);
+  }
+
+  function setVote(vote) {
+    voteElem.innerHTML = +vote;
+    var widgetEvent = new CustomEvent('change', {
+      bubbles: true,
+      detail: +vote
+    });
+    elem.dispatchEvent(widgetEvent);
+  }
+
+  this.setVote = setVote;
+}
+
+var voter = new Voter({
+  elem: document.getElementById('voter')
+});
+
+voter.setVote(5);
+
+document.getElementById('voter').addEventListener('change', function(e) {
+  alert(e.detail); // новое значение голоса
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>Задача 2 - Отследить одновременное нажатие</h1>
+
+<p>Q+W</p>
+
+<pre>
+runOnKeys(
+  function() { alert('Привет!'); },
+  "Q".charCodeAt(0),
+  "W".charCodeAt(0)
+);
+</pre>
+
+<script>
+
+'use strict';
+
+const runOnKeys = (func, ...rest) => {
+  let set = new Set();
+
+  const doFunc = e => {
+    if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+    for (let code of rest) {
+      if (code === e.keyCode) set.add(code);
+    }
+
+    if (set.size === rest.length) {
+      set.clear();
+      func();
+    }
+  };
+
+  const reSet = e => set.clear();
+
+  document.addEventListener('keydown', doFunc);
+  document.addEventListener('keyup', reSet);
+};
+
+runOnKeys(
+  function() { alert('Привет!'); },
+  "Q".charCodeAt(0),
+  "W".charCodeAt(0)
+);
+
+</script>
+</body>
+
+</html>

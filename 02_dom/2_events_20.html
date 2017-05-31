@@ -1,0 +1,90 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+
+/* стиль для input с плейсхолдером */
+
+.placeholder {
+  color: blue;
+  font-family: Georgia;
+}
+
+/* стиль для подсказки над элементом (вместо плейсхолдера при фокусировке) */
+
+.placeholder-tooltip {
+  color: blue;
+  font-family: Georgia;
+  position: fixed;
+  font-size: 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<p>Красивый placeholder:</p>
+
+<input type="email" data-placeholder="E-mail">
+
+<script>
+
+'use strict';
+
+let input = document.querySelector('[data-placeholder]');
+
+// Показать placeholder внутри input
+// Также можно сделать это при помощи вёрстки, отдельным элементом
+function showPlaceholder(input) {
+  input.classList.add('placeholder');
+  input.value = input.dataset.placeholder;
+}
+
+showPlaceholder(input);
+
+// ...ваш код для input...
+
+let tip = null;
+let mail = '';
+
+const showTip = e => {
+  if (e.target.tagName !== 'INPUT' &&
+     !e.target.hasAttribute('data-placeholder')) return;
+
+  if (!mail) e.target.value = '';
+
+  let box = e.target.getBoundingClientRect();
+
+  tip = document.createElement('span');
+  tip.classList.add('placeholder-tooltip');
+  tip.textContent = e.target.dataset.placeholder;
+
+  e.target.parentElement.append(tip);
+
+  tip.style.left = box.left + 'px';
+  tip.style.top = box.top - tip.offsetHeight + 'px';
+};
+
+const hideTip = e => {
+  if (e.target.tagName !== 'INPUT' &&
+     !e.target.hasAttribute('data-placeholder')) return;
+
+  mail = e.target.value;
+
+  if (tip) {
+    tip.remove();
+    tip = null;
+  }
+
+  if (!e.target.value) e.target.value = e.target.dataset.placeholder;
+};
+
+// FF уже знает focusin/focusout
+document.addEventListener('focusin', showTip);
+document.addEventListener('focusout', hideTip);
+
+</script>
+</body>
+</html>

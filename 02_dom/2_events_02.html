@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<style>
+
+.arrow {
+  /* padding: 0; */
+  background: #eee;
+  border-radius: 50%;
+  /* border: 1px solid gray; */
+  font-size: 16px;
+  line-height: 1.5;
+  color: #ccc;
+  display: block;
+  position: absolute;
+}
+
+.arrow:focus {
+  outline: none;
+}
+
+.arrow:hover {
+  background: #fff;
+  cursor: pointer;
+}
+
+.arrowLeft {
+  left: 5px;
+  top: 40%;
+}
+
+.arrowRight {
+  right: 5px;
+  top: 40%;
+}
+
+.line {
+  height: 130px;
+  width: 9999px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0;
+  position: relative;
+  left: 0;
+  transition: 0.5s;
+}
+
+.line img {
+  width: 130px;
+  height: 130px;
+  display: block;
+}
+
+.line li {
+  display: inline-block;
+}
+
+.screen {
+  width: 390px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.slider {
+  border: 1px solid #eee;
+  width: 390px;
+  padding: 10px 40px;
+  position: relative;
+  margin: 0 auto;
+  border-radius: 5px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div class="slider">
+  <button class="arrow arrowLeft">&lArr;</button>
+  <button class="arrow arrowRight">&rArr;</button>
+  <div class="screen">
+    <ul class="line">
+      <li><img src="https://js.cx/carousel/1.png"></li>
+      <li><img src="https://js.cx/carousel/2.png"></li>
+      <li><img src="https://js.cx/carousel/3.png"></li>
+      <li><img src="https://js.cx/carousel/4.png"></li>
+      <li><img src="https://js.cx/carousel/5.png"></li>
+      <li><img src="https://js.cx/carousel/6.png"></li>
+      <li><img src="https://js.cx/carousel/7.png"></li>
+      <li><img src="https://js.cx/carousel/8.png"></li>
+      <li><img src="https://js.cx/carousel/9.png"></li>
+      <li><img src="https://js.cx/carousel/10.png"></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+
+'use strict';
+
+// var lis = document.getElementsByTagName('li');
+// for (var i = 0; i < lis.length; i++) {
+//   lis[i].style.position = 'relative';
+//   var span = document.createElement('span');
+//   span.style.cssText = 'position:absolute;left:0;top:0';
+//   span.innerHTML = i + 1;
+//   lis[i].appendChild(span);
+// }
+
+var line = document.querySelector('.line');
+var left = document.querySelector('.arrowLeft');
+var right = document.querySelector('.arrowRight');
+
+var widthImg = 130;
+var widthScreen = 390;
+var amount = line.children.length;
+var finish = amount * widthImg - widthScreen;
+
+// тут можно поменять по сколько картинок прокручивать - по 1, по 2, по 3
+var each = 3;
+
+function runLeft() {
+  var val = parseInt(getComputedStyle(line).left);
+  val += widthImg * each;
+
+  if (val >= 0) {
+    line.style.left = '0px';
+  } else {
+    line.style.left = val + 'px';
+  }
+  
+  
+}
+
+function runRight() {
+  var val = parseInt(getComputedStyle(line).left);
+  val -= widthImg * each;
+
+  if (Math.abs(val) >= finish) {
+    line.style.left = -finish + 'px';
+  } else {
+    line.style.left = val + 'px';
+  }
+}
+
+left.addEventListener('click', runLeft);
+right.addEventListener('click', runRight);
+
+</script>
+
+</body>
+</html>

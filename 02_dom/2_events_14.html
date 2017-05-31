@@ -1,0 +1,89 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta charset="utf-8">
+<style>
+
+body,
+html {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+#matrix {
+  width: 400px;
+  margin: auto;
+  overflow: auto;
+  text-align: justify;
+}
+
+.arrow { 
+  position: fixed;
+  top: 80px;
+  left: -24px;
+  font-size: 24px;
+  line-height: 1.5;
+  display: inline-block;
+  cursor: pointer;
+  opacity: 0;
+  transition: 1s;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!--Символы для стрелок: ▲ ▼-->
+
+<h1>Кнопка "наверх" / "вниз к контенту"</h1>
+
+<div class="arrow"></div>
+
+<div id="matrix">
+  <script>
+    for (var i = 0; i < 2000; i++) document.writeln(i);
+  </script>
+</div>
+
+<script>
+
+'use strict';
+
+let markUp = '▲';
+let markDown = '▼';
+let scrollPoint = 0;
+let arrow = document.querySelector('.arrow');
+
+const move = e => {
+  if (!scrollPoint && document.body.scrollTop > 0) {
+    scrollPoint = document.body.scrollTop;
+    document.body.scrollTop = 0;
+    arrow.textContent = markDown;
+  } else {
+    document.body.scrollTop = scrollPoint;
+    scrollPoint = 0;
+    arrow.textContent = markUp;
+  }
+};
+  
+const showArrow = e => {
+  if (pageYOffset < document.documentElement.clientHeight) return;
+  
+  scrollPoint = 0;
+  arrow.style.opacity = '0.2';
+  arrow.style.left = '30px';
+  arrow.textContent = markUp;
+};
+
+arrow.addEventListener('click', move);
+document.addEventListener('scroll', showArrow);
+
+</script>
+</body>
+
+</html>

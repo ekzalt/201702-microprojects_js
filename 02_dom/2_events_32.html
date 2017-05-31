@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8">
+<title>Компонент Голосовалка</title>
+
+<style>
+
+/* css style here */
+
+.voter {
+  font-family: Consolas, "Lucida Console", monospace;
+  font-size: 18px;
+}
+
+.up,
+.down {
+  cursor: pointer;
+  color: blue;
+  font-weight: bold;
+}
+
+</style>
+
+<script src="https://cdn.polyfill.io/v1/polyfill.js?features=Element.prototype.closest"></script>
+</head>
+
+<body>
+
+<!-- html markup here -->
+
+<h1>Компонент: Голосовалка</h1>
+<p>(прототипный стиль, классы ES6)</p>
+
+<div id="voter" class="voter">
+  <span class="down">—</span>
+  <span class="vote">0</span>
+  <span class="up">+</span>
+</div>
+
+<script>
+
+// javascript code here
+
+'use strict';
+
+class Voter {
+  constructor(opts) {
+    this.elem = opts.elem;
+    this.step = opts.step || 1;
+
+    let vote = this.elem.querySelector('.vote');
+
+    const up = () => vote.textContent = parseInt(vote.textContent) + this.step;
+    const down = () => vote.textContent = parseInt(vote.textContent) - this.step;
+
+    const change = e => {
+      if (e.target.closest('.up')) up();
+      else if (e.target.closest('.down')) down();
+      else return;
+    };
+
+    opts.elem.addEventListener('mousedown', e => e.preventDefault());
+    opts.elem.addEventListener('click', change);
+  }
+
+  get vote() { return this.elem.querySelector('.vote').textContent; }
+  set vote(n) { this.elem.querySelector('.vote').textContent = n; }
+}
+
+let voter = new Voter({
+  elem: document.getElementById('voter'),
+  step: 2
+});
+
+voter.vote = 1;
+
+</script>
+</body>
+</html>

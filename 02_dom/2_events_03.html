@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+
+<style>
+
+th {
+  cursor: pointer;
+}
+
+th:hover {
+  background: yellow;
+}
+
+</style>
+</head>
+
+<body>
+
+  <table id="grid">
+    <thead>
+      <tr>
+        <th>Возраст</th>
+        <th>Имя</th>
+        <th>Уровень</th>
+        <th>Рейтинг</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>5</td>
+        <td>Вася</td>
+        <td>14-й уровень</td>
+        <td>6.6</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>Петя</td>
+        <td>1-й уровень</td>
+        <td>4.5</td>
+      </tr>
+      <tr>
+        <td>12</td>
+        <td>Женя</td>
+        <td>27-й уровень</td>
+        <td>5.4</td>
+      </tr>
+      <tr>
+        <td>9</td>
+        <td>Маша</td>
+        <td>9-й уровень</td>
+        <td>3.2</td>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>Илья</td>
+        <td>33-й уровень</td>
+        <td>1.7</td>
+      </tr>
+    </tbody>
+  </table>
+
+<script>
+
+'use strict';
+
+let grid = document.querySelector('#grid');
+
+const sortBy = e => {
+  if ( !(grid.contains(e.target) &&
+         e.target.closest('thead') &&
+         e.target.tagName === 'TH') ) return;
+
+  let i = e.target.cellIndex;
+  let bodyNew = grid.tBodies[0].cloneNode(false);
+  let trs = grid.tBodies[0].children;
+  trs = [].slice.call(trs);
+  
+  if (!isNaN(parseFloat(trs[0].cells[i].textContent))) {
+    trs.sort((a, b) => parseFloat(a.cells[i].textContent) - parseFloat(b.cells[i].textContent));
+  } else {
+    trs.sort((a, b) => a.cells[i].textContent > b.cells[i].textContent);
+  }
+
+  for (let tr of trs) bodyNew.append(tr);
+    
+  grid.tBodies[0].replaceWith(bodyNew);
+};
+
+grid.addEventListener('click', sortBy);
+
+</script>
+</body>
+</html>
