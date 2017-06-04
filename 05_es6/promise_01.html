@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>circle</title>
+
+<style>
+/* CSS style */
+
+.circle {
+  transition-property: width, height, margin-left, margin-top;
+  transition-duration: 2s;
+  position: fixed;
+  transform: translateX(-50%) translateY(-50%);
+  background-color: red;
+  border-radius: 50%;
+}
+
+.message-ball {
+  font-size: 24px;
+  text-align: center;
+  line-height: 150px;
+}
+
+</style>
+</head>
+
+<body>
+<!-- HTML markup -->
+
+<button onclick="showCircle(150, 150, 100)">showCircle(150, 150, 100)</button>
+
+<script>
+// JavaScript code
+
+function showCircle(cx, cy, radius, callback) {
+  let div = document.createElement('div');
+
+  div.style.width = 0;
+  div.style.height = 0;
+  div.style.left = cx + 'px';
+  div.style.top = cy + 'px';
+  div.className = 'circle';
+  document.body.append(div);
+
+  setTimeout(() => {
+    div.style.width = radius * 2 + 'px';
+    div.style.height = radius * 2 + 'px';
+
+    setTimeout(callback, 2000, div);
+  }, 0);
+}
+
+showCircle(150, 150, 100, div => {
+  div.classList.add('message-ball');
+  div.append("Hello, world!");
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "microprojects.js",
+  "version": "5.4.0",
+  "description": "micro projects javascript ES5/ES6/ES7",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ekzalt/201702-microprojects_js.git"
+  },
+  "keywords": [
+    "js",
+    "javascript",
+    "es5",
+    "es6",
+    "es7"
+  ],
+  "author": "Alexander Zakharov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ekzalt/201702-microprojects_js/issues"
+  },
+  "homepage": "https://github.com/ekzalt/201702-microprojects_js#readme"
+}
